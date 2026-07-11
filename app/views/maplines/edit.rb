@@ -26,9 +26,9 @@ class Views::Maplines::Edit < Views::Base
       end
 
       div(class: "mt-8 flex flex-col gap-8") do
-        render_map
         render_settings
         render_key_dates
+        render Views::Maplines::Editor.new(mapline: @mapline)
         render Views::Sources::Manager.new(mapline: @mapline, new_source: @new_source)
         render_publish
       end
@@ -111,36 +111,6 @@ class Views::Maplines::Edit < Views::Base
     when "public"    then "Cette carte est publique : elle apparaît sur votre profil."
     when "unlisted"  then "Cette carte est accessible uniquement via son lien."
     else "Cette carte est un brouillon, visible de vous seul."
-    end
-  end
-
-  def render_map
-    section(
-      class: "rounded-2xl border border-line bg-surface p-6",
-      data: {
-        controller: "map",
-        map_center_lng_value: @mapline.center_lng,
-        map_center_lat_value: @mapline.center_lat,
-        map_zoom_value: @mapline.zoom,
-        map_save_url_value: mapline_path(@mapline, format: :json)
-      }
-    ) do
-      div(class: "mb-4 flex flex-wrap items-center justify-between gap-3") do
-        div do
-          h2(class: "text-xl font-semibold") { "Vue initiale" }
-          p(class: "text-sm text-muted") do
-            "Déplacez et zoomez la carte, puis enregistrez le cadrage d'ouverture."
-          end
-        end
-        div(class: "flex items-center gap-3") do
-          span(data: { map_target: "status" }, class: "text-sm text-muted", role: "status")
-          button(type: "button", class: button_classes(:primary),
-            data: { action: "map#saveInitialView" }) { "Définir la vue initiale" }
-        end
-      end
-
-      div(data: { map_target: "canvas" },
-        class: "h-[420px] w-full overflow-hidden rounded-lg border border-line")
     end
   end
 end

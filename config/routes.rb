@@ -12,6 +12,17 @@ Rails.application.routes.draw do
     resources :key_dates, only: %i[create edit update destroy]
   end
 
+  # Éditeur cartographique : endpoints JSON du canevas (dessin des éléments).
+  namespace :editor do
+    resources :maplines, only: [] do
+      resources :features, only: :create
+    end
+    resources :features, only: %i[update destroy] do
+      put "states/:key_date_id", to: "feature_states#upsert", as: :state
+      delete "states/:key_date_id", to: "feature_states#destroy"
+    end
+  end
+
   # Pages publiques : lecture d'une carte et profil auteur.
   get "/m/:slug", to: "public_maplines#show", as: :public_mapline
   get "/@:slug", to: "profiles#show", as: :profile

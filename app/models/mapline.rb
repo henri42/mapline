@@ -2,6 +2,7 @@ class Mapline < ApplicationRecord
   belongs_to :user
   has_many :sources, -> { order(:position, :id) }, dependent: :destroy, inverse_of: :mapline
   has_many :key_dates, -> { order(:sort_key) }, dependent: :destroy, inverse_of: :mapline
+  has_many :map_features, -> { order(:z_index, :id) }, dependent: :destroy, inverse_of: :mapline
 
   # draft   : visible du seul auteur
   # unlisted : accessible par lien direct, non listée
