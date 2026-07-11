@@ -13,8 +13,11 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       options.binary = CHROMIUM
       options.add_argument("--headless=new")
       options.add_argument("--no-sandbox")
-      options.add_argument("--disable-gpu")
       options.add_argument("--disable-dev-shm-usage")
+      # WebGL logiciel (SwiftShader) pour MapLibre GL en headless.
+      options.add_argument("--use-gl=angle")
+      options.add_argument("--use-angle=swiftshader")
+      options.add_argument("--enable-unsafe-swiftshader")
       # Le confinement snap bloque le profil temporaire créé par défaut sous
       # /tmp : on le place dans l'arborescence accessible en écriture du snap.
       snap_common = File.join(Dir.home, "snap", "chromium", "common")

@@ -89,7 +89,7 @@ Colonnes du générateur (`email_address`, `password_digest`, table `sessions`) 
 
 ## Jalons (chacun démontrable)
 
-> **Avancement** : M0, M1, M2, M3 réalisés. Prochain : M4.
+> **Avancement** : M0, M1, M2, M3, M4 réalisés. Prochain : M5.
 > Chaque jalon fait est suivi d'une note **→ Réalisé** consignant les écarts au plan.
 
 ### M0 — Socle : app qui tourne, auth, layout Phlex ✅
@@ -134,8 +134,18 @@ Modèle `KeyDate` avec `sort_key` + **tests dédiés dates négatives/granularit
 - **Composant frise partagé** `Components::Timeline` (kit Phlex) + `timeline_controller.js` (Stimulus), rendu **à la fois éditeur** (aperçu sous le gestionnaire) **et lecteur** (page publique). Espacement uniforme v1 ; clic, glisser avec aimantation, flèches clavier, boutons préc./suiv. ; panneau date+titre+description. Les données de chaque date sont portées par les graduations en `data-*` (pas de blob JSON). À chaque changement, émet `timeline:change` (`{ index, sortKey, keyDateId }`) que la carte consommera à partir de M5.
 - **Écart assumé** : le gestionnaire de dates clés construit une date vierge (formulaire d'ajout) qui pollue l'association en mémoire ; l'aperçu de la frise filtre donc sur `persisted?`.
 
-### M4 — Dessin d'éléments (mono-état) : dessiner une carte statique complète
+### M4 — Dessin d'éléments (mono-état) : dessiner une carte statique complète ✅
 `npm add terra-draw terra-draw-maplibre-gl-adapter`. Modèles `MapFeature`/`FeatureState`, store éditeur, toolbar, intégration Terra Draw, inspecteur de style, endpoints JSON, `GeojsonValidator`, autosave. Tout état rattaché à la première date clé à ce stade.
+
+**→ Réalisé.** Notes :
+- **Modèles** `MapFeature` (enum `feature_type`, `style:json`, `resolved_style` = défauts du type fusionnés) et `FeatureState` (`geometry:json`, `style_override`, `visible`, unicité `(map_feature_id, key_date_id)`). Contrôle croisé type géométrie ↔ type de feature dans `FeatureState`, plus garde « la date clé appartient à la même carte ».
+- **`GeojsonValidator`** (`app/validators/`, `ActiveModel::EachValidator`) : type autorisé (Point/LineString/Polygon/MultiPolygon), coordonnées bornées, taille ≤ 500 Ko. `validates :geometry, geojson: true`.
+- **Endpoints JSON** sous `namespace :editor` : `Editor::FeaturesController` (create imbriqué sous mapline avec premier état transactionnel, update, destroy) et `Editor::FeatureStatesController` (upsert PUT idempotent `/editor/features/:id/states/:key_date_id`, destroy). `Editor::BaseController` charge via `Current.user.maplines` (accès croisé → 404) et délègue la sérialisation à **`EditorPayload`** (source unique du JSON éditeur, réutilisée par la vue et les endpoints ; `feature_json` renvoie le **style résolu** pour un rendu client direct).
+- **Store JS singleton** (`app/frontend/editor/store.js`) hydraté une fois depuis `#editor-payload`, pub/sub, `resolveState` (mono-état en M4). `editor/api.js` (fetch CSRF), `editor/layers.js` (4 sources GeoJSON + têtes de flèches calculées, styles pilotés par propriétés).
+- **Contrôleurs Stimulus** `editor--map` (MapLibre + Terra Draw, dessin → create, sélection au clic, autosave géométrie via édition Terra Draw en mode select, bouton « vue initiale » repris de M2), `editor--toolbar`, `editor--features-panel`, `editor--inspector` (champs nom/style dynamiques par type, debounce), `editor--autosave` — tous branchés sur le store (pas d'outlets). Commandes impératives carte via `CustomEvent('editor:map-command')`.
+- **Fond de carte** : ajout d'une URL `glyphs` (OpenFreeMap) au style neutre pour les couches symbol (étiquettes, têtes de flèches).
+- **Écart assumé** : l'éditeur remplace la carte « Vue initiale » de M2 sur la page edit (une seule carte MapLibre) ; le contrôleur `map` de M2 ne sert plus que la page lecteur.
+- **Vérification** : tests modèles (validateur, cohérence géométrie, unicité), intégration des endpoints (auth, rejets validateur, upsert idempotent), et **test système pilotant l'éditeur dans un vrai navigateur** (dessin d'un point → persistance → rechargement → suppression). Config test système : WebGL logiciel SwiftShader activé pour MapLibre en headless.
 
 ### M5 — Versionnement des géométries : la carte évolue au fil de la frise (cut sec)
 `StateResolver` Ruby + miroir JS, sérialiseur du payload lecteur, badges héritage, duplication auto au premier trait, actions supprimer/masquer/réafficher, rendu lecteur résolu par date.

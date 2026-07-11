@@ -59,13 +59,15 @@ class MaplinesFlowTest < ActionDispatch::IntegrationTest
     assert_select "[data-map-target='canvas']"
   end
 
-  test "l'éditeur expose le bouton de définition de la vue initiale" do
+  test "l'éditeur cartographique est câblé sur ses contrôleurs Stimulus" do
     sign_in_as users(:one)
     get edit_mapline_url(maplines(:alice_draft))
 
     assert_response :success
-    assert_select "[data-controller='map'][data-map-save-url-value]"
-    assert_select "button[data-action='map#saveInitialView']"
+    assert_select "[data-controller='editor--map'][data-editor--map-save-url-value]"
+    assert_select "button[data-action='editor--map#saveInitialView']"
+    assert_select "[data-controller='editor--toolbar']"
+    assert_select "script#editor-payload"
   end
 
   test "un brouillon est introuvable pour un non-propriétaire" do

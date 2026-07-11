@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_11_120002) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_12_100002) do
+  create_table "feature_states", force: :cascade do |t|
+    t.integer "map_feature_id", null: false
+    t.integer "key_date_id", null: false
+    t.json "geometry", null: false
+    t.json "style_override"
+    t.boolean "visible", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key_date_id"], name: "index_feature_states_on_key_date_id"
+    t.index ["map_feature_id", "key_date_id"], name: "index_feature_states_on_map_feature_id_and_key_date_id", unique: true
+    t.index ["map_feature_id"], name: "index_feature_states_on_map_feature_id"
+  end
+
   create_table "key_dates", force: :cascade do |t|
     t.integer "mapline_id", null: false
     t.integer "year", null: false
@@ -24,6 +37,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_120002) do
     t.datetime "updated_at", null: false
     t.index ["mapline_id", "sort_key"], name: "index_key_dates_on_mapline_id_and_sort_key", unique: true
     t.index ["mapline_id"], name: "index_key_dates_on_mapline_id"
+  end
+
+  create_table "map_features", force: :cascade do |t|
+    t.integer "mapline_id", null: false
+    t.string "feature_type", null: false
+    t.string "name"
+    t.integer "z_index", default: 0, null: false
+    t.json "style", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mapline_id"], name: "index_map_features_on_mapline_id"
   end
 
   create_table "maplines", force: :cascade do |t|
@@ -75,7 +99,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_120002) do
     t.index ["slug"], name: "index_users_on_slug", unique: true
   end
 
+  add_foreign_key "feature_states", "key_dates"
+  add_foreign_key "feature_states", "map_features"
   add_foreign_key "key_dates", "maplines"
+  add_foreign_key "map_features", "maplines"
   add_foreign_key "maplines", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "sources", "maplines"
