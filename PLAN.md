@@ -89,7 +89,10 @@ Colonnes du générateur (`email_address`, `password_digest`, table `sessions`) 
 
 ## Jalons (chacun démontrable)
 
-### M0 — Socle : app qui tourne, auth, layout Phlex
+> **Avancement** : M0, M1, M2 réalisés (branche `m1-crud-maplines`). Prochain : M3.
+> Chaque jalon fait est suivi d'une note **→ Réalisé** consignant les écarts au plan.
+
+### M0 — Socle : app qui tourne, auth, layout Phlex ✅
 ```bash
 rails new . --skip-javascript
 bundle add vite_rails phlex-rails
@@ -98,13 +101,27 @@ bin/rails generate phlex:install
 bin/rails generate authentication
 npm add @hotwired/turbo @hotwired/stimulus stimulus-vite-helpers
 ```
-Layout Phlex, enregistrement auto des contrôleurs Stimulus (`stimulus-vite-helpers`), CSS maison via Vite avec design tokens (pas de framework CSS), migration profil users, écran d'inscription.
+Layout Phlex, enregistrement auto des contrôleurs Stimulus (`stimulus-vite-helpers`), migration profil users, écran d'inscription.
 
-### M1 — CRUD Maplines + statuts + sources + profils
+**→ Réalisé.** Écart assumé : **Tailwind CSS v4** adopté (`@tailwindcss/vite`) plutôt que du CSS maison sans framework. Les design tokens vivent dans le bloc `@theme` de `app/frontend/styles/application.css` (ils deviennent des utilitaires `bg-canvas`, `text-muted`…), les classes réutilisables `.btn`/`.field` sous `@layer components`. Les vues Phlex étant hors du root Vite, elles sont déclarées comme sources Tailwind via `@source "../../views"` / `"../../components"`.
+
+### M1 — CRUD Maplines + statuts + sources + profils ✅
 Modèles `Mapline` et `Source`, tableau de bord auteur, machine à statuts avec validation `:publish`, page publique `/m/:slug` (contrôle d'accès par statut), profil `/@:slug`, sources en Turbo Frames imbriquées.
 
-### M2 — Carte statique + fond neutre + vue initiale
+**→ Réalisé.** Notes :
+- **Module applicatif renommé `Mapline` → `MaplineApp`** (`config/application.rb`) : le nom `Mapline` du module Rails masquait la constante du modèle `Mapline` sous Zeitwerk. Ne pas rétablir.
+- Enum `status` déclaré avec `scopes: false` (un scope `Mapline.public` écraserait `Module#public`) ; scopes maison `listed` / `accessible_by_link`. Transition via `publish_as(status)` ; validation `:publish` = ≥ 1 source pour l'instant (le ≥ 1 date clé viendra avec M3).
+- Sources en **frames imbriqués tout-redirection** : frame externe `sources_manager` (liste + formulaire d'ajout ; create/delete le rechargent) et frames internes `source_<id>` pour l'édition en ligne. Pas de `turbo_stream` custom.
+- **Refactor kit Phlex** : composants `Button`/`Link` appelés via le kit (`Button(...)`, `Link(...)`) avec argument `variant` (`:primary`/`:ghost`/`:danger`), mapping variante→CSS centralisé dans `Components::Base#button_classes`.
+
+### M2 — Carte statique + fond neutre + vue initiale ✅
 `npm add maplibre-gl`. Style JSON custom dans le repo à partir du style Positron d'OpenFreeMap (gratuit, sans clé) : suppression des couches `boundary`, `place`, `poi`, noms de routes (schéma OpenMapTiles). Relief hillshade optionnel (AWS Terrain) — à valider ici, sinon repli sans relief. Bouton « Définir la vue initiale ».
+
+**→ Réalisé.** Notes :
+- `app/frontend/styles/basemap-neutral.json` : style **minimal écrit à la main** (source vectorielle OpenFreeMap `openmaptiles`, couches `background`/`water`/`waterway`/`park`/`landcover_wood` uniquement) plutôt que Positron dépouillé — même résultat neutre, plus maintenable. Ni frontières, ni toponymes, ni routes.
+- **Relief hillshade écarté en v1** (repli assumé) : le raster ombré OpenFreeMap plafonne à z6 et bavouille en surzoom.
+- Contrôleur Stimulus `map` (`app/frontend/controllers/map_controller.js`) partagé lecteur/éditeur. Le bouton « Définir la vue initiale » enregistre centre/zoom via `PATCH /maplines/:id.json` — `MaplinesController#update` répond en HTML **et** JSON (préfigure les endpoints `Editor::` de M4).
+- CSP toujours désactivée (initializer commenté), d'où l'accès direct aux tuiles OpenFreeMap et aux web workers blob de MapLibre.
 
 ### M3 — Dates clés + frise
 Modèle `KeyDate` avec `sort_key` + **tests dédiés dates négatives/granularité**, CRUD en Turbo Frames (champs année / av.-ap. J.-C. / mois / jour), composant frise partagé.
