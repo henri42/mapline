@@ -1,0 +1,11 @@
+atlas:
+  mapline: alice_public
+  title: Atlas historique de l'Europe
+  url: https://example.com/atlas
+  author: J. Dupont
+  position: 1
+
+rome_source:
+  mapline: bob_public
+  title: Histoire romaine
+  position: 1

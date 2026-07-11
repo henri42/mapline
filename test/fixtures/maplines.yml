@@ -1,0 +1,20 @@
+alice_public:
+  user: one
+  title: L'Europe en 1815
+  slug: europe-1815
+  description: Le continent après le Congrès de Vienne.
+  status: public
+  published_at: <%= 1.week.ago %>
+
+alice_draft:
+  user: one
+  title: Brouillon d'Alice
+  slug: brouillon-alice
+  status: draft
+
+bob_public:
+  user: two
+  title: Rome antique
+  slug: rome-antique
+  status: public
+  published_at: <%= 2.days.ago %>

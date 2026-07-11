@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_11_074300) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_11_120001) do
+  create_table "maplines", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.string "status", default: "draft", null: false
+    t.float "center_lng", default: 0.0, null: false
+    t.float "center_lat", default: 20.0, null: false
+    t.float "zoom", default: 1.5, null: false
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_maplines_on_slug", unique: true
+    t.index ["user_id"], name: "index_maplines_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "ip_address"
@@ -18,6 +34,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_074300) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "sources", force: :cascade do |t|
+    t.integer "mapline_id", null: false
+    t.string "title", null: false
+    t.string "url"
+    t.string "author"
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mapline_id"], name: "index_sources_on_mapline_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -33,5 +60,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_074300) do
     t.index ["slug"], name: "index_users_on_slug", unique: true
   end
 
+  add_foreign_key "maplines", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "sources", "maplines"
 end

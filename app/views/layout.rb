@@ -23,7 +23,7 @@ class Views::Layout < Components::Base
     doctype
     html(lang: "fr") do
       head do
-        title { [@title, "Mapline"].compact.join(" · ") }
+        title { [ @title, "Mapline" ].compact.join(" · ") }
         meta(name: "viewport", content: "width=device-width,initial-scale=1")
         meta(name: "apple-mobile-web-app-capable", content: "yes")
         csrf_meta_tags
@@ -50,7 +50,9 @@ class Views::Layout < Components::Base
         link_to("Mapline", root_path, class: "text-xl font-bold text-ink hover:no-underline")
         nav(class: "flex items-center gap-3") do
           if Current.user
-            span(class: "text-sm text-muted") { Current.user.display_name }
+            link_to("Mes cartes", maplines_path, class: "btn btn-ghost")
+            link_to(Current.user.display_name, profile_path(Current.user.slug),
+              class: "text-sm text-muted")
             button_to("Se déconnecter", session_path, method: :delete, class: "btn btn-ghost")
           else
             link_to("Se connecter", new_session_path, class: "btn btn-ghost")
