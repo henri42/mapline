@@ -28,13 +28,32 @@ class Views::Maplines::Edit < Views::Base
       div(class: "mt-8 flex flex-col gap-8") do
         render_map
         render_settings
-        render_publish
+        render_key_dates
         render Views::Sources::Manager.new(mapline: @mapline, new_source: @new_source)
+        render_publish
       end
     end
   end
 
   private
+
+  def render_key_dates
+    section(class: "rounded-2xl border border-line bg-surface p-6") do
+      div(class: "flex flex-col gap-6") do
+        render Views::KeyDates::Manager.new(mapline: @mapline)
+
+        # `Manager` construit une date clé vierge (formulaire d'ajout) : on ne
+        # garde que les dates persistées pour l'aperçu de la frise.
+        saved = @mapline.key_dates.select(&:persisted?)
+        if saved.any?
+          div do
+            h3(class: "mb-3 text-sm font-semibold text-muted") { "Aperçu de la frise" }
+            Timeline(key_dates: saved, id: "editor_timeline")
+          end
+        end
+      end
+    end
+  end
 
   def render_settings
     section(class: "rounded-2xl border border-line bg-surface p-6") do

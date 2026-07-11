@@ -1,0 +1,18 @@
+# Les fixtures court-circuitent les callbacks : `sort_key` est fourni explicitement
+# (year * 10_000 + (month || 1) * 100 + (day || 1)).
+vienne:
+  mapline: alice_public
+  year: 1815
+  month: 6
+  day: 9
+  sort_key: 18150609
+  title: Congrès de Vienne
+  description: Réorganisation de l'Europe après les guerres napoléoniennes.
+
+waterloo:
+  mapline: alice_public
+  year: 1815
+  month: 6
+  day: 18
+  sort_key: 18150618
+  title: Bataille de Waterloo

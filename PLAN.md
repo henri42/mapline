@@ -89,7 +89,7 @@ Colonnes du générateur (`email_address`, `password_digest`, table `sessions`) 
 
 ## Jalons (chacun démontrable)
 
-> **Avancement** : M0, M1, M2 réalisés (branche `m1-crud-maplines`). Prochain : M3.
+> **Avancement** : M0, M1, M2, M3 réalisés. Prochain : M4.
 > Chaque jalon fait est suivi d'une note **→ Réalisé** consignant les écarts au plan.
 
 ### M0 — Socle : app qui tourne, auth, layout Phlex ✅
@@ -123,8 +123,16 @@ Modèles `Mapline` et `Source`, tableau de bord auteur, machine à statuts avec 
 - Contrôleur Stimulus `map` (`app/frontend/controllers/map_controller.js`) partagé lecteur/éditeur. Le bouton « Définir la vue initiale » enregistre centre/zoom via `PATCH /maplines/:id.json` — `MaplinesController#update` répond en HTML **et** JSON (préfigure les endpoints `Editor::` de M4).
 - CSP toujours désactivée (initializer commenté), d'où l'accès direct aux tuiles OpenFreeMap et aux web workers blob de MapLibre.
 
-### M3 — Dates clés + frise
+### M3 — Dates clés + frise ✅
 Modèle `KeyDate` avec `sort_key` + **tests dédiés dates négatives/granularité**, CRUD en Turbo Frames (champs année / av.-ap. J.-C. / mois / jour), composant frise partagé.
+
+**→ Réalisé.** Notes :
+- **Saisie via attributs virtuels `year_input` + `era`** (année positive + av./ap. J.-C.) convertis en `year` astronomique signé dans un `before_validation` ; `sort_key` calculé dans un second `before_validation`. Helper `display_date` : `label` prime, sinon rendu selon la granularité (jour+mois+année / mois+année / année) avec suffixe « av. J.-C. ». Un helper privé `effective_year` fait fonctionner l'affichage même avant validation (dérive de la saisie), utilisé par les tests sur enregistrements `.new`.
+- Validations en **erreurs sur `:base`** (messages français propres, sans préfixe d'attribut anglais — pas de locale fr installée), calquées sur `Mapline#must_have_a_source`. Unicité `(mapline_id, sort_key)` doublée d'un index unique en base.
+- **Prérequis de publication complété** : `Mapline` valide désormais ≥ 1 source **et** ≥ 1 date clé au contexte `:publish` (le second était annoncé pour M3 dans la note M1).
+- **CRUD en frames imbriqués tout-redirection**, strictement calqué sur les sources : frame externe `key_dates_manager`, frames internes `key_date_<id>`. `KeyDatesController` sous `resources :maplines`.
+- **Composant frise partagé** `Components::Timeline` (kit Phlex) + `timeline_controller.js` (Stimulus), rendu **à la fois éditeur** (aperçu sous le gestionnaire) **et lecteur** (page publique). Espacement uniforme v1 ; clic, glisser avec aimantation, flèches clavier, boutons préc./suiv. ; panneau date+titre+description. Les données de chaque date sont portées par les graduations en `data-*` (pas de blob JSON). À chaque changement, émet `timeline:change` (`{ index, sortKey, keyDateId }`) que la carte consommera à partir de M5.
+- **Écart assumé** : le gestionnaire de dates clés construit une date vierge (formulaire d'ajout) qui pollue l'association en mémoire ; l'aperçu de la frise filtre donc sur `persisted?`.
 
 ### M4 — Dessin d'éléments (mono-état) : dessiner une carte statique complète
 `npm add terra-draw terra-draw-maplibre-gl-adapter`. Modèles `MapFeature`/`FeatureState`, store éditeur, toolbar, intégration Terra Draw, inspecteur de style, endpoints JSON, `GeojsonValidator`, autosave. Tout état rattaché à la première date clé à ce stade.

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Mapline lets history enthusiasts build historical/geopolitical maps that evolve over time, paired with a navigable timeline: the reader drags a cursor across key dates and the map animates. Greenfield Rails 8 app.
 
-**`PLAN.md` is the source of truth** for scope, architecture decisions, and the milestone breakdown (M0–M7). Read it before starting non-trivial work. `IDEE.md` is the original French brief. Milestones M0–M2 are implemented; M3+ (key dates/timeline, drawing, geometry versioning, animation, events) are not yet built.
+**`PLAN.md` is the source of truth** for scope, architecture decisions, and the milestone breakdown (M0–M7). Read it before starting non-trivial work. `IDEE.md` is the original French brief. Milestones M0–M3 are implemented; M4+ (drawing, geometry versioning, animation, events) are not yet built.
 
 UI copy, code comments, and test names are written in **French**. Match that.
 
@@ -50,11 +50,12 @@ CI (`.github/workflows/ci.yml`) runs brakeman, rubocop, and `db:test:prepare tes
 
 ### Domain model & conventions
 
-- **`Mapline`** — `status` enum `draft`/`unlisted`/`public` declared with `scopes: false` (a `Mapline.public` scope would clobber `Module#public`); use the `listed`/`accessible_by_link` scopes instead. Publish requirements (≥1 source now; ≥1 key date later) are enforced only in the `:publish` validation context via `publish_as(status)` — not on create. Slugs auto-generate (`parameterize` + random suffix), same pattern as `User`. Access control is `Mapline#viewable_by?(user)`.
+- **`Mapline`** — `status` enum `draft`/`unlisted`/`public` declared with `scopes: false` (a `Mapline.public` scope would clobber `Module#public`); use the `listed`/`accessible_by_link` scopes instead. Publish requirements (≥1 source **and** ≥1 key date) are enforced only in the `:publish` validation context via `publish_as(status)` — not on create. Slugs auto-generate (`parameterize` + random suffix), same pattern as `User`. Access control is `Mapline#viewable_by?(user)`.
 - **`Source`** — belongs to a mapline, auto-incrementing `position`. Managed on the editor page through **nested Turbo Frames**: an outer `sources_manager` frame (list + add form; create/delete redirect-refresh it) with per-row `source_<id>` frames for inline edit. Deletes target `sources_manager` via `data-turbo-frame`; the whole flow is redirect-based (no custom turbo_stream rendering).
+- **`KeyDate`** — belongs to a mapline; a key date is a "chapter" and the future unit of geometry versioning. Historical dates use a signed **astronomical `year`** (0 = 1 BC) + derived `sort_key` integer (`year * 10_000 + (month||1) * 100 + (day||1)`), not SQL `date` — handles BC years and day/month/year granularity (nullable `month`/`day`). Input is via virtual attributes `year_input` (positive) + `era` (`bc`/`ce`), converted in `before_validation`; use `display_date` for rendering (`label` overrides the auto-format). Validations add French messages to `:base` (no fr locale installed). Same **nested Turbo Frame** CRUD pattern as `Source` (`key_dates_manager` / `key_date_<id>`).
+- **Timeline** — `Components::Timeline` (Phlex kit) + `timeline_controller.js` (Stimulus) is the shared editor/reader frise, rendered on both the editor (preview) and public pages. Per-date data rides on the tick elements as `data-*` (no JSON blob). It emits a `timeline:change` event (`{ index, sortKey, keyDateId }`) that the map controllers will consume from M5 onward.
 - **Auth** — `Authentication` concern resumes the session on every request (so `Current.user` is available on public pages too) and requires login by default; opt out per-controller with `allow_unauthenticated_access`. Author-scoped controllers load records through `Current.user.maplines` so cross-user access 404s.
 - **Maps** — `app/frontend/styles/basemap-neutral.json` is a self-contained MapLibre style over OpenFreeMap vector tiles showing only physical geography (no borders/toponyms/roads). `map_controller.js` renders it read-only on public pages and, in the editor, saves the current center/zoom as the initial view via `PATCH /maplines/:id.json` (`MaplinesController#update` responds to both HTML and JSON).
-- **Historical dates (future, M3)** — dates use a signed astronomical `year` + derived `sort_key` integer, not SQL `date` (handles BC years and granularity). See PLAN.md before implementing.
 
 ### Testing notes
 
