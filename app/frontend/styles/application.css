@@ -1,0 +1,283 @@
+/* Mapline — feuille de styles globale.
+   Design tokens maison (pas de framework CSS), interface simple et moderne. */
+
+:root {
+  /* Couleurs */
+  --color-bg: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-text: #1c1b1a;
+  --color-text-muted: #6b6862;
+  --color-border: #e4e1db;
+  --color-primary: #2b6cb0;
+  --color-primary-hover: #245a94;
+  --color-primary-contrast: #ffffff;
+  --color-notice-bg: #e7f4ea;
+  --color-notice-text: #1f6b37;
+  --color-error-bg: #fdecec;
+  --color-error-text: #a12222;
+
+  /* Typographie */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+
+  /* Espacement */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* Rayons et ombres */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
+
+  --container-max: 64rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+}
+
+/* En-tête */
+.site-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-3);
+}
+
+.site-header__brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-text);
+}
+
+.site-header__brand:hover {
+  text-decoration: none;
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.site-header__user {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.site-header__nav form {
+  margin: 0;
+}
+
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.btn--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn--ghost:hover {
+  border-color: var(--color-text-muted);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* Messages flash */
+main.container {
+  padding-block: var(--space-8);
+}
+
+.flash {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-4);
+  font-size: 0.95rem;
+}
+
+.flash--notice {
+  background: var(--color-notice-bg);
+  color: var(--color-notice-text);
+}
+
+.flash--error {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+/* Section d'accueil */
+.hero {
+  text-align: center;
+  padding-block: var(--space-12);
+}
+
+.hero__title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  margin: 0 0 var(--space-4);
+}
+
+.hero__lead {
+  max-width: 40rem;
+  margin: 0 auto var(--space-8);
+  color: var(--color-text-muted);
+  font-size: 1.15rem;
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Cartes d'authentification */
+.auth-card {
+  max-width: 24rem;
+  margin-inline: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-8);
+}
+
+.auth-card__title {
+  margin: 0 0 var(--space-6);
+  font-size: 1.5rem;
+}
+
+.auth-card__intro {
+  color: var(--color-text-muted);
+  margin-top: 0;
+}
+
+.auth-card__aside {
+  margin-top: var(--space-4);
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+/* Formulaires */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.field input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.field input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: var(--color-primary);
+}
+
+.form input[type="submit"] {
+  margin-top: var(--space-2);
+}
+
+.form-errors {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.form-errors__title {
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+}
+
+.form-errors ul {
+  margin: 0;
+  padding-left: var(--space-6);
+}
