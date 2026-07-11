@@ -27,6 +27,10 @@ class Views::PublicMaplines::Show < Views::Base
           end
         end
 
+        if @mapline.key_dates.any?
+          Timeline(key_dates: @mapline.key_dates)
+        end
+
         section(
           data: {
             controller: "map",

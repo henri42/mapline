@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       patch :change_status
     end
     resources :sources, only: %i[create edit update destroy]
+    resources :key_dates, only: %i[create edit update destroy]
   end
 
   # Pages publiques : lecture d'une carte et profil auteur.

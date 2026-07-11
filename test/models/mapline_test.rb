@@ -19,9 +19,19 @@ class MaplineTest < ActiveSupport::TestCase
     assert_predicate mapline.reload, :draft?
   end
 
-  test "publie quand au moins une source est présente" do
+  test "refuse la publication sans date clé (contexte :publish)" do
     mapline = maplines(:alice_draft)
     mapline.sources.create!(title: "Une source")
+
+    assert_not mapline.publish_as("public")
+    assert_includes mapline.errors.full_messages.join, "date clé"
+    assert_predicate mapline.reload, :draft?
+  end
+
+  test "publie quand une source et une date clé sont présentes" do
+    mapline = maplines(:alice_draft)
+    mapline.sources.create!(title: "Une source")
+    mapline.key_dates.create!(year_input: 1815, era: "ce")
 
     assert mapline.publish_as("public")
     assert_predicate mapline.reload, :public?

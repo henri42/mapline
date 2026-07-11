@@ -1,6 +1,7 @@
 class Mapline < ApplicationRecord
   belongs_to :user
   has_many :sources, -> { order(:position, :id) }, dependent: :destroy, inverse_of: :mapline
+  has_many :key_dates, -> { order(:sort_key) }, dependent: :destroy, inverse_of: :mapline
 
   # draft   : visible du seul auteur
   # unlisted : accessible par lien direct, non listée
@@ -17,6 +18,7 @@ class Mapline < ApplicationRecord
 
   # Exigences portées par la publication, pas par la création (contexte :publish).
   validate :must_have_a_source, on: :publish
+  validate :must_have_a_key_date, on: :publish
 
   before_validation :ensure_slug, on: :create
 
@@ -56,5 +58,11 @@ class Mapline < ApplicationRecord
     return if sources.reject(&:marked_for_destruction?).any?
 
     errors.add(:base, "Ajoutez au moins une source avant de publier.")
+  end
+
+  def must_have_a_key_date
+    return if key_dates.reject(&:marked_for_destruction?).any?
+
+    errors.add(:base, "Ajoutez au moins une date clé avant de publier.")
   end
 end

@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_11_120001) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_11_120002) do
+  create_table "key_dates", force: :cascade do |t|
+    t.integer "mapline_id", null: false
+    t.integer "year", null: false
+    t.integer "month"
+    t.integer "day"
+    t.integer "sort_key", null: false
+    t.string "label"
+    t.string "title"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mapline_id", "sort_key"], name: "index_key_dates_on_mapline_id_and_sort_key", unique: true
+    t.index ["mapline_id"], name: "index_key_dates_on_mapline_id"
+  end
+
   create_table "maplines", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "title", null: false
@@ -60,6 +75,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_11_120001) do
     t.index ["slug"], name: "index_users_on_slug", unique: true
   end
 
+  add_foreign_key "key_dates", "maplines"
   add_foreign_key "maplines", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "sources", "maplines"
