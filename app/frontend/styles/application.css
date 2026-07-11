@@ -3,6 +3,12 @@
    automatiquement des utilitaires (bg-primary, text-muted, border-line…). */
 @import "tailwindcss";
 
+/* Les vues Phlex vivent hors du root Vite (app/frontend) : sans ces @source,
+   Tailwind ne scanne pas leurs classes et ne génère pas les utilitaires
+   utilisés uniquement dans app/views et app/components. */
+@source "../../views";
+@source "../../components";
+
 @theme {
   /* Couleurs */
   --color-canvas: #f7f6f3;
