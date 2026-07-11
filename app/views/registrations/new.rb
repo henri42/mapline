@@ -7,12 +7,12 @@ class Views::Registrations::New < Views::Base
 
   def view_template
     render Views::Layout.new(title: "Créer un compte") do
-      div(class: "auth-card") do
-        h1(class: "auth-card__title") { "Créer un compte" }
+      div(class: "mx-auto max-w-sm rounded-2xl border border-line bg-surface p-8 shadow-lg") do
+        h1(class: "mb-6 text-2xl") { "Créer un compte" }
 
         render_errors
 
-        form_with(url: registration_path, class: "form") do |form|
+        form_with(url: registration_path, class: "flex flex-col gap-4") do |form|
           field do
             form.label :display_name, "Nom affiché"
             form.text_field :display_name,
@@ -39,10 +39,10 @@ class Views::Registrations::New < Views::Base
               required: true, autocomplete: "new-password", maxlength: 72
           end
 
-          form.submit "Créer mon compte", class: "btn btn--primary btn--block"
+          form.submit "Créer mon compte", class: "btn btn-primary btn-block"
         end
 
-        p(class: "auth-card__aside") do
+        p(class: "mt-4 text-sm text-muted") do
           plain "Déjà inscrit ? "
           link_to "Se connecter", new_session_path
         end
@@ -55,9 +55,9 @@ class Views::Registrations::New < Views::Base
   def render_errors
     return if @user.errors.empty?
 
-    div(class: "form-errors", role: "alert") do
-      p(class: "form-errors__title") { "Impossible de créer le compte :" }
-      ul do
+    div(class: "mb-6 rounded-md bg-error-bg px-4 py-3 text-error-ink", role: "alert") do
+      p(class: "mb-2 font-semibold") { "Impossible de créer le compte :" }
+      ul(class: "list-disc pl-6") do
         @user.errors.full_messages.each do |message|
           li { message }
         end

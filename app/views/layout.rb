@@ -32,9 +32,9 @@ class Views::Layout < Components::Base
         vite_client_tag
         vite_javascript_tag("application")
       end
-      body do
+      body(class: "min-h-screen bg-canvas font-sans leading-relaxed text-ink antialiased") do
         render_header
-        main(class: "container") do
+        main(class: "mx-auto w-full max-w-5xl px-4 py-8") do
           render_flash
           yield
         end
@@ -45,16 +45,16 @@ class Views::Layout < Components::Base
   private
 
   def render_header
-    header(class: "site-header") do
-      div(class: "container site-header__inner") do
-        link_to("Mapline", root_path, class: "site-header__brand")
-        nav(class: "site-header__nav") do
+    header(class: "border-b border-line bg-surface") do
+      div(class: "mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3") do
+        link_to("Mapline", root_path, class: "text-xl font-bold text-ink hover:no-underline")
+        nav(class: "flex items-center gap-3") do
           if Current.user
-            span(class: "site-header__user") { Current.user.display_name }
-            button_to("Se déconnecter", session_path, method: :delete, class: "btn btn--ghost")
+            span(class: "text-sm text-muted") { Current.user.display_name }
+            button_to("Se déconnecter", session_path, method: :delete, class: "btn btn-ghost")
           else
-            link_to("Se connecter", new_session_path, class: "btn btn--ghost")
-            link_to("Créer un compte", new_registration_path, class: "btn btn--primary")
+            link_to("Se connecter", new_session_path, class: "btn btn-ghost")
+            link_to("Créer un compte", new_registration_path, class: "btn btn-primary")
           end
         end
       end
@@ -65,8 +65,12 @@ class Views::Layout < Components::Base
     flash.each do |type, message|
       next if message.blank?
 
-      kind = type.to_s == "alert" ? "error" : "notice"
-      div(class: "flash flash--#{kind}", role: "status") { message }
+      classes = if type.to_s == "alert"
+        "bg-error-bg text-error-ink"
+      else
+        "bg-notice-bg text-notice-ink"
+      end
+      div(class: "mb-4 rounded-md px-4 py-3 text-sm #{classes}", role: "status") { message }
     end
   end
 end

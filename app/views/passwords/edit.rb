@@ -7,10 +7,10 @@ class Views::Passwords::Edit < Views::Base
 
   def view_template
     render Views::Layout.new(title: "Nouveau mot de passe") do
-      div(class: "auth-card") do
-        h1(class: "auth-card__title") { "Choisir un nouveau mot de passe" }
+      div(class: "mx-auto max-w-sm rounded-2xl border border-line bg-surface p-8 shadow-lg") do
+        h1(class: "mb-6 text-2xl") { "Choisir un nouveau mot de passe" }
 
-        form_with(url: password_path(@token), method: :put, class: "form") do |form|
+        form_with(url: password_path(@token), method: :put, class: "flex flex-col gap-4") do |form|
           field do
             form.label :password, "Nouveau mot de passe"
             form.password_field :password,
@@ -23,7 +23,7 @@ class Views::Passwords::Edit < Views::Base
               required: true, autocomplete: "new-password", maxlength: 72
           end
 
-          form.submit "Enregistrer", class: "btn btn--primary btn--block"
+          form.submit "Enregistrer", class: "btn btn-primary btn-block"
         end
       end
     end
