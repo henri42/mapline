@@ -37,10 +37,10 @@ class Views::Sources::Form < Views::Base
 
       div(class: "flex items-center gap-2") do
         form.submit(@source.persisted? ? "Enregistrer" : "Ajouter la source",
-          class: "btn btn-primary")
+          class: button_classes(:primary))
         if @source.persisted?
-          link_to "Annuler", edit_mapline_path(@mapline),
-            class: "btn btn-ghost", data: { turbo_frame: "source_#{@source.id}" }
+          Link("Annuler", edit_mapline_path(@mapline),
+            variant: :ghost, data: { turbo_frame: "source_#{@source.id}" })
         end
       end
     end

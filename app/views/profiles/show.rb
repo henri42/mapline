@@ -40,15 +40,15 @@ class Views::Profiles::Show < Views::Base
     div(class: "flex items-center justify-between gap-3 rounded-xl border border-line bg-surface p-5") do
       div(class: "min-w-0") do
         div(class: "flex items-center gap-2") do
-          link_to mapline.title, public_mapline_path(mapline.slug),
-            class: "text-lg font-semibold text-ink hover:no-underline hover:underline"
-          render Components::StatusBadge.new(status: mapline.status) if @owner
+          Link(mapline.title, public_mapline_path(mapline.slug),
+            class: "text-lg font-semibold text-ink hover:no-underline hover:underline")
+          StatusBadge(status: mapline.status) if @owner
         end
         if mapline.description.present?
           p(class: "mt-1 line-clamp-1 text-sm text-muted") { mapline.description }
         end
       end
-      link_to "Ouvrir", public_mapline_path(mapline.slug), class: "btn btn-ghost text-sm"
+      Link("Ouvrir", public_mapline_path(mapline.slug), variant: :ghost, class: "text-sm")
     end
   end
 end

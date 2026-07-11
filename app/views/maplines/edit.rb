@@ -12,17 +12,17 @@ class Views::Maplines::Edit < Views::Base
     render Views::Layout.new(title: @mapline.title) do
       div(class: "mb-6 flex flex-wrap items-center justify-between gap-3") do
         div(class: "flex items-center gap-3") do
-          link_to "← Mes cartes", maplines_path, class: "text-sm text-muted"
+          Link("← Mes cartes", maplines_path, class: "text-sm text-muted")
         end
         unless @mapline.draft?
-          link_to "Voir la page publique", public_mapline_path(@mapline.slug),
-            class: "btn btn-ghost text-sm"
+          Link("Voir la page publique", public_mapline_path(@mapline.slug),
+            variant: :ghost, class: "text-sm")
         end
       end
 
       div(class: "flex items-center gap-3") do
         h1(class: "text-2xl font-semibold") { @mapline.title }
-        render Components::StatusBadge.new(status: @mapline.status)
+        StatusBadge(status: @mapline.status)
       end
 
       div(class: "mt-8 flex flex-col gap-8") do
@@ -58,7 +58,7 @@ class Views::Maplines::Edit < Views::Base
           form.text_area :description, rows: 4, value: @mapline.description,
             class: "w-full rounded-md border border-line bg-surface px-3 py-2.5 text-ink"
         end
-        div { form.submit "Enregistrer", class: "btn btn-primary" }
+        div { form.submit "Enregistrer", class: button_classes(:primary) }
       end
     end
   end
@@ -70,18 +70,18 @@ class Views::Maplines::Edit < Views::Base
 
       div(class: "flex flex-wrap gap-2") do
         unless @mapline.public?
-          button_to "Publier", change_status_mapline_path(@mapline, status: "public"),
-            method: :patch, class: "btn btn-primary"
+          Button("Publier", change_status_mapline_path(@mapline, status: "public"),
+            method: :patch)
         end
         unless @mapline.unlisted?
-          button_to "Rendre accessible par lien",
+          Button("Rendre accessible par lien",
             change_status_mapline_path(@mapline, status: "unlisted"),
-            method: :patch, class: "btn btn-ghost"
+            method: :patch, variant: :ghost)
         end
         unless @mapline.draft?
-          button_to "Repasser en brouillon",
+          Button("Repasser en brouillon",
             change_status_mapline_path(@mapline, status: "draft"),
-            method: :patch, class: "btn btn-ghost"
+            method: :patch, variant: :ghost)
         end
       end
     end

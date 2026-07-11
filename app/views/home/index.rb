@@ -13,10 +13,10 @@ class Views::Home::Index < Views::Base
         end
         div(class: "flex flex-wrap justify-center gap-3") do
           if Current.user
-            link_to("Accéder à mes cartes", maplines_path, class: "btn btn-primary")
+            Link("Accéder à mes cartes", maplines_path, variant: :primary)
           else
-            link_to("Créer un compte", new_registration_path, class: "btn btn-primary")
-            link_to("Se connecter", new_session_path, class: "btn btn-ghost")
+            Link("Créer un compte", new_registration_path, variant: :primary)
+            Link("Se connecter", new_session_path, variant: :ghost)
           end
         end
       end

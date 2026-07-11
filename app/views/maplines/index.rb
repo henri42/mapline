@@ -10,7 +10,7 @@ class Views::Maplines::Index < Views::Base
     render Views::Layout.new(title: "Mes cartes") do
       div(class: "mb-8 flex items-center justify-between gap-4") do
         h1(class: "text-2xl font-semibold") { "Mes cartes" }
-        link_to "Nouvelle carte", new_mapline_path, class: "btn btn-primary"
+        Link("Nouvelle carte", new_mapline_path, variant: :primary)
       end
 
       if @maplines.any?
@@ -29,9 +29,9 @@ class Views::Maplines::Index < Views::Base
     div(class: "flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface p-5") do
       div(class: "min-w-0") do
         div(class: "flex items-center gap-2") do
-          link_to mapline.title, edit_mapline_path(mapline),
-            class: "text-lg font-semibold text-ink hover:no-underline hover:underline"
-          render Components::StatusBadge.new(status: mapline.status)
+          Link(mapline.title, edit_mapline_path(mapline),
+            class: "text-lg font-semibold text-ink hover:no-underline hover:underline")
+          StatusBadge(status: mapline.status)
         end
         if mapline.description.present?
           p(class: "mt-1 line-clamp-1 text-sm text-muted") { mapline.description }
@@ -39,9 +39,9 @@ class Views::Maplines::Index < Views::Base
       end
       div(class: "flex shrink-0 items-center gap-2") do
         unless mapline.draft?
-          link_to "Voir", public_mapline_path(mapline.slug), class: "btn btn-ghost text-sm"
+          Link("Voir", public_mapline_path(mapline.slug), variant: :ghost, class: "text-sm")
         end
-        link_to "Modifier", edit_mapline_path(mapline), class: "btn btn-ghost text-sm"
+        Link("Modifier", edit_mapline_path(mapline), variant: :ghost, class: "text-sm")
       end
     end
   end
@@ -49,7 +49,7 @@ class Views::Maplines::Index < Views::Base
   def render_empty
     div(class: "rounded-xl border border-dashed border-line bg-surface p-10 text-center") do
       p(class: "mb-4 text-muted") { "Vous n'avez pas encore de carte." }
-      link_to "Créer ma première carte", new_mapline_path, class: "btn btn-primary"
+      Link("Créer ma première carte", new_mapline_path, variant: :primary)
     end
   end
 end

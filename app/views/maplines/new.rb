@@ -25,8 +25,8 @@ class Views::Maplines::New < Views::Base
                 class: "w-full rounded-md border border-line bg-surface px-3 py-2.5 text-ink"
             end
             div(class: "flex items-center gap-2") do
-              form.submit "Créer la carte", class: "btn btn-primary"
-              link_to "Annuler", maplines_path, class: "btn btn-ghost"
+              form.submit "Créer la carte", class: button_classes(:primary)
+              Link("Annuler", maplines_path, variant: :ghost)
             end
           end
         end

@@ -19,15 +19,15 @@ class Views::Sessions::New < Views::Base
               required: true, autocomplete: "current-password", maxlength: 72
           end
 
-          form.submit "Se connecter", class: "btn btn-primary btn-block"
+          form.submit "Se connecter", class: button_classes(:primary, block: true)
         end
 
         p(class: "mt-4 text-sm text-muted") do
-          link_to "Mot de passe oublié ?", new_password_path
+          Link("Mot de passe oublié ?", new_password_path)
         end
         p(class: "mt-4 text-sm text-muted") do
           plain "Pas encore de compte ? "
-          link_to "Créer un compte", new_registration_path
+          Link("Créer un compte", new_registration_path)
         end
       end
     end

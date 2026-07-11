@@ -39,12 +39,12 @@ class Views::Registrations::New < Views::Base
               required: true, autocomplete: "new-password", maxlength: 72
           end
 
-          form.submit "Créer mon compte", class: "btn btn-primary btn-block"
+          form.submit "Créer mon compte", class: button_classes(:primary, block: true)
         end
 
         p(class: "mt-4 text-sm text-muted") do
           plain "Déjà inscrit ? "
-          link_to "Se connecter", new_session_path
+          Link("Se connecter", new_session_path)
         end
       end
     end

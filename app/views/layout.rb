@@ -47,16 +47,16 @@ class Views::Layout < Components::Base
   def render_header
     header(class: "border-b border-line bg-surface") do
       div(class: "mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3") do
-        link_to("Mapline", root_path, class: "text-xl font-bold text-ink hover:no-underline")
+        Link("Mapline", root_path, class: "text-xl font-bold text-ink hover:no-underline")
         nav(class: "flex items-center gap-3") do
           if Current.user
-            link_to("Mes cartes", maplines_path, class: "btn btn-ghost")
-            link_to(Current.user.display_name, profile_path(Current.user.slug),
+            Link("Mes cartes", maplines_path, variant: :ghost)
+            Link(Current.user.display_name, profile_path(Current.user.slug),
               class: "text-sm text-muted")
-            button_to("Se déconnecter", session_path, method: :delete, class: "btn btn-ghost")
+            Button("Se déconnecter", session_path, method: :delete, variant: :ghost)
           else
-            link_to("Se connecter", new_session_path, class: "btn btn-ghost")
-            link_to("Créer un compte", new_registration_path, class: "btn btn-primary")
+            Link("Se connecter", new_session_path, variant: :ghost)
+            Link("Créer un compte", new_registration_path, variant: :primary)
           end
         end
       end

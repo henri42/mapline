@@ -23,7 +23,7 @@ class Views::Passwords::Edit < Views::Base
               required: true, autocomplete: "new-password", maxlength: 72
           end
 
-          form.submit "Enregistrer", class: "btn btn-primary btn-block"
+          form.submit "Enregistrer", class: button_classes(:primary, block: true)
         end
       end
     end

@@ -35,12 +35,12 @@ class Views::Sources::Row < Views::Base
         end
       end
       div(class: "flex shrink-0 items-center gap-2") do
-        link_to "Modifier", edit_mapline_source_path(@source.mapline, @source),
-          class: "btn btn-ghost text-sm"
-        button_to "Supprimer", [ @source.mapline, @source ], method: :delete,
-          class: "btn btn-ghost text-sm text-error-ink",
+        Link("Modifier", edit_mapline_source_path(@source.mapline, @source),
+          variant: :ghost, class: "text-sm")
+        Button("Supprimer", [ @source.mapline, @source ], method: :delete,
+          variant: :danger, class: "text-sm",
           form: { data: { turbo_frame: "sources_manager" }, class: "inline" },
-          data: { turbo_confirm: "Supprimer cette source ?" }
+          data: { turbo_confirm: "Supprimer cette source ?" })
       end
     end
   end

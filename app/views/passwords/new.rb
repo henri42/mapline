@@ -16,11 +16,11 @@ class Views::Passwords::New < Views::Base
               required: true, autofocus: true, autocomplete: "username"
           end
 
-          form.submit "Envoyer les instructions", class: "btn btn-primary btn-block"
+          form.submit "Envoyer les instructions", class: button_classes(:primary, block: true)
         end
 
         p(class: "mt-4 text-sm text-muted") do
-          link_to "Retour à la connexion", new_session_path
+          Link("Retour à la connexion", new_session_path)
         end
       end
     end

@@ -13,6 +13,9 @@ class SourcesFlowTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "turbo-frame#sources_manager"
     assert_select "turbo-frame#source_#{@mapline.sources.first.id}"
+    # Les composants Button/Link produisent les classes attendues.
+    assert_select "a.btn.btn-ghost", text: "Modifier"
+    assert_select "form button.btn.btn-ghost.text-error-ink", text: "Supprimer"
   end
 
   test "ajouter une source redirige vers la page de gestion" do

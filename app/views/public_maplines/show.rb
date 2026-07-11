@@ -11,7 +11,7 @@ class Views::PublicMaplines::Show < Views::Base
       if owner_preview?
         div(class: "mb-6 rounded-md bg-notice-bg px-4 py-3 text-sm text-notice-ink") do
           plain "Aperçu — cette carte est en #{@mapline.status_label.downcase}. "
-          link_to "Gérer la carte", edit_mapline_path(@mapline)
+          Link("Gérer la carte", edit_mapline_path(@mapline))
         end
       end
 
@@ -20,7 +20,7 @@ class Views::PublicMaplines::Show < Views::Base
           h1(class: "font-serif text-[clamp(1.8rem,4vw,2.6rem)] leading-tight") { @mapline.title }
           p(class: "mt-2 text-muted") do
             plain "par "
-            link_to @mapline.user.display_name, profile_path(@mapline.user.slug)
+            Link(@mapline.user.display_name, profile_path(@mapline.user.slug))
           end
           if @mapline.description.present?
             p(class: "mt-4 max-w-2xl text-lg") { @mapline.description }
