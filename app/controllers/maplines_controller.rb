@@ -27,10 +27,18 @@ class MaplinesController < ApplicationController
 
   def update
     if @mapline.update(mapline_params)
-      redirect_to edit_mapline_path(@mapline), notice: "Modifications enregistrées."
+      respond_to do |format|
+        format.html { redirect_to edit_mapline_path(@mapline), notice: "Modifications enregistrées." }
+        format.json { render json: view_state(@mapline) }
+      end
     else
-      render Views::Maplines::Edit.new(mapline: @mapline, new_source: @mapline.sources.new),
-        status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          render Views::Maplines::Edit.new(mapline: @mapline, new_source: @mapline.sources.new),
+            status: :unprocessable_entity
+        end
+        format.json { render json: { errors: @mapline.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -67,6 +75,10 @@ class MaplinesController < ApplicationController
   end
 
   def mapline_params
-    params.expect(mapline: %i[title description])
+    params.expect(mapline: %i[title description center_lng center_lat zoom])
+  end
+
+  def view_state(mapline)
+    mapline.slice(:center_lng, :center_lat, :zoom)
   end
 end

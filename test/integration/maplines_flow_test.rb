@@ -17,6 +17,30 @@ class MaplinesFlowTest < ActionDispatch::IntegrationTest
     assert_redirected_to edit_mapline_url(mapline)
   end
 
+  test "enregistre la vue initiale via PATCH JSON" do
+    sign_in_as users(:one)
+    mapline = maplines(:alice_draft)
+
+    patch mapline_url(mapline, format: :json),
+      params: { mapline: { center_lng: 2.3522, center_lat: 48.8566, zoom: 5.5 } }.to_json,
+      headers: { "Content-Type" => "application/json" }
+
+    assert_response :success
+    mapline.reload
+    assert_in_delta 2.3522, mapline.center_lng, 0.0001
+    assert_in_delta 48.8566, mapline.center_lat, 0.0001
+    assert_in_delta 5.5, mapline.zoom, 0.0001
+  end
+
+  test "un non-propriétaire ne peut pas modifier la vue initiale (JSON)" do
+    sign_in_as users(:two)
+    patch mapline_url(maplines(:alice_draft), format: :json),
+      params: { mapline: { zoom: 9 } }.to_json,
+      headers: { "Content-Type" => "application/json" }
+
+    assert_response :not_found
+  end
+
   test "publier sans source échoue et reste en brouillon" do
     sign_in_as users(:one)
     mapline = maplines(:alice_draft)
@@ -30,6 +54,18 @@ class MaplinesFlowTest < ActionDispatch::IntegrationTest
   test "une carte publique est consultable par un visiteur anonyme" do
     get public_mapline_url(maplines(:alice_public).slug)
     assert_response :success
+    # La carte est câblée sur le contrôleur Stimulus avec la vue initiale.
+    assert_select "[data-controller='map'][data-map-zoom-value]"
+    assert_select "[data-map-target='canvas']"
+  end
+
+  test "l'éditeur expose le bouton de définition de la vue initiale" do
+    sign_in_as users(:one)
+    get edit_mapline_url(maplines(:alice_draft))
+
+    assert_response :success
+    assert_select "[data-controller='map'][data-map-save-url-value]"
+    assert_select "button[data-action='map#saveInitialView']"
   end
 
   test "un brouillon est introuvable pour un non-propriétaire" do

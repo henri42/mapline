@@ -27,8 +27,16 @@ class Views::PublicMaplines::Show < Views::Base
           end
         end
 
-        section(class: "rounded-2xl border border-dashed border-line bg-canvas p-10 text-center text-muted") do
-          p { "La carte interactive s'affichera ici." }
+        section(
+          data: {
+            controller: "map",
+            map_center_lng_value: @mapline.center_lng,
+            map_center_lat_value: @mapline.center_lat,
+            map_zoom_value: @mapline.zoom
+          }
+        ) do
+          div(data: { map_target: "canvas" },
+            class: "h-[480px] w-full overflow-hidden rounded-2xl border border-line")
         end
 
         render_sources
